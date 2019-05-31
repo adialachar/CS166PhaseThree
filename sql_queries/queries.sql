@@ -4,9 +4,9 @@ SELECT DISTINCT P.seats
 FROM FlightInfo FI, Flight F, Plane P
 WHERE FI.flight_id = /*flight var*/ AND F.actual_departure_date = /* date var*/ AND P.id = FI.plane_id
 -
-SELECT COUNT(R.rnum)
-FROM Reservation R, Plane P2, FlightInfo FI2, Flight F2
-WHERE FI2.flight_id = /*flight var*/ AND F2.actual_departure_date = /*date var*/ AND R.status = 'C';
+SELECT num_sold
+FROM Flight
+WHERE fnum = /*flight var*/;
 
 --LIST NUMBER OF REPAIRS PER PLANE IN DESCENDING ORDER--
 SELECT COUNT(R.rid) AS mycount, P.id
