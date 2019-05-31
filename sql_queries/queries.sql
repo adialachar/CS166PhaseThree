@@ -1,5 +1,6 @@
+
 --LIST NUMBER OF AVAILABLE SEATS FOR GIVEN FLIGHT--
-SELECT P.seats
+SELECT DISTINCT P.seats
 FROM FlightInfo FI, Flight F, Plane P
 WHERE FI.flight_id = /*flight var*/ AND F.actual_departure_date = /* date var*/ AND P.id = FI.plane_id
 -
