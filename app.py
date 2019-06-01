@@ -201,9 +201,57 @@ def AvailableSeats():
 
 @app.route("/repairs_per_plane_desc", methods = ['GET', 'POST'])
 def repairs_per_plane():
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
     return render_template("repairs_per_plane.html")
 @app.route("/repairs_per_year_asc", methods = ['GET', 'POST'])
 def repairs_per_year():
+
+    try:
+        con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
+        cur = con.cursor()
+        
+
+
+        cur.execute("SELECT date_part('year', R1.repair_date) AS R_year, COUNT(R2.id) AS myCount FROM Repairs R1, Repairs R2 WHERE R1.id = R2.id GROUP BY R_year ORDER BY myCount ASC;")
+
+        while True:
+            row = cur.fetchone()
+
+            if row == None:
+                break
+
+            print("YEAR {0} , number of repairs {1}".format(row[0], row[1]))
+
+
+
+    except psycopg2.DatabaseError as e:
+        if con:
+            con.rollback()
+        print("Error")
+        print(e)
+        sys.exit(1)
+
+
+
+    finally:
+        if con:
+            con.close()
+
+
+
     return render_template("repairs_per_year.html")
 
 @app.route("/passenger_status", methods = ['GET', 'POST'])
