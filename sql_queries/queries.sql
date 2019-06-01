@@ -1,3 +1,22 @@
+--ADD PLANE DETAILS--
+INSERT INTO Plane (id, make, model, age, seats,)
+VALUES (/*id value*/, /*make*/,/*model*/,/*age*/, /*seat num*/);
+
+--ADD PILOT DETAILS--
+INSERT INTO Pilot(id, fullname, nationality,)
+VALUES (/*id value*/, /*full name*/, /*nationality*/);
+
+--ADD Flight DETAILS--
+INSERT INTO Flight(fnum, cost, num_sold, num_stops,actual-departure_date, actual_arrival_date, arrival_airport, departure_airport)
+VALUES (/*fnum*/,/*cost*/, /*num_sold*/, /*num_stops*/, /*depart date*/, /*arrive date*/, /*arrive airport*/, /*depart airport*/);
+
+--ADD TECH DETAILS--
+INSERT INTO Technician(id, full_name)
+VALUES(/*id value*/, /*full name*/);
+
+
+----------------------------------------------END OF FIRST FOUR INSERTION QUERIES--------------------------------------
+
 
 --LIST NUMBER OF AVAILABLE SEATS FOR GIVEN FLIGHT--
 SELECT DISTINCT P.seats
@@ -6,7 +25,7 @@ WHERE FI.flight_id = /*flight var*/ AND F.actual_departure_date = /* date var*/ 
 -
 SELECT num_sold
 FROM Flight
-WHERE fnum = /*flight var*/;
+WHERE fnum = /*flight var*/
 
 --LIST NUMBER OF REPAIRS PER PLANE IN DESCENDING ORDER--
 SELECT COUNT(R.rid) AS mycount, P.id
