@@ -436,7 +436,7 @@ def BookFlight():
         data = request.form
         flight_number = data.get("flight_number",-1)
         customer_fname = data.get("customer_fname",-1)
-        customer_lname - data.get("customer_lname",-1)
+        customer_lname = data.get("customer_lname",-1)
         customer_gender = data.get("customer_gender",-1)
         customer_DOB = data.get("customer_DOB",-1)
         customer_address = data.get("customer_address",-1)
@@ -448,12 +448,12 @@ def BookFlight():
         customer_id = functions.checkCustomer(customer_fname,customer_lname,customer_gender,customer_DOB,customer_address,customer_phone,customer_zipcode)
 
 
-
+        '''
         if customer_id == None:
 
-            cur.execute("select id from Customer C where C.fname = '{}' and C.lname = '{}' and C.DOB = '{}';".format(customer_fname,customer_lname,customer_DOB
+            cur.execute("select id from Customer C where C.fname = '{}' and C.lname = '{}' and C.dob = '{}';".format(customer_fname,customer_lname,customer_DOB))
             customer_id = cur.fetchone()[0]
-
+        '''
 
         try:
             con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
@@ -461,9 +461,28 @@ def BookFlight():
         
 
 
+
+
+
+
+
+
+            if customer_id == None:
+
+                cur.execute("select id from Customer C where C.fname = '{}' and C.lname = '{}' and C.dob = '{}';".format(customer_fname,customer_lname,customer_DOB))
+                customer_id = cur.fetchone()[0]
+
+
+
+
+
+
+
             cur.execute("select num_sold from flight where flight.fnum = '{}'".format(flight_number))
             num_sold = None
+
             while True:
+
                 row = cur.fetchone()
 
                 if row == None:
@@ -476,16 +495,16 @@ def BookFlight():
                 
 
 
-            cur.execute("select num_seats from Plane P, flightinfo F where F.fid = '{}' and F.plane_id = P.id;".format(flight_number)
+            cur.execute("select seats from Plane P, flightinfo F where F.flight_id = '{}' and F.plane_id = P.id;".format(flight_number))
 
 
             row = cur.fetchone()
             num_seats = row[0]
             
             if num_sold < num_seats:
-                cur.execute("Insert into reservation (rnum,cid,fid,status) values (nextval('ResNum'),'{}','{}','R');".format(customer_id,flight_number)
+                cur.execute("Insert into reservation (rnum,cid,fid,status) values (nextval('ResNum'),'{}','{}','R');".format(customer_id,flight_number))
             else:
-                cur.execute("Insert into reservation (rnum,cid,fid,status) values (nextval('ResNum'),'{}','{}', 'W');".format(customer_id,flight_number)
+                cur.execute("Insert into reservation (rnum,cid,fid,status) values (nextval('ResNum'),'{}','{}', 'W');".format(customer_id,flight_number))
             
 
 
@@ -523,32 +542,50 @@ def BookFlight():
 def AvailableSeats():
 	
     if request.method == 'POST':
+
+
+
+        data = request.form
+
+        flight_number = data.get("flight_number",-1)
+        a_d_d = data.get("a_d_d",-1)
+
+
+
+
         try:
             con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
             cur = con.cursor()
         
 
 
-            cur.execute("SELECT DISTINCT P.seats FROM FlightInfo FI, Flight F, Plane P WHERE FI.flight_id = %s AND F.actual_departure_date = %s AND P.id = FI.plane_id".format())
+            cur.execute("SELECT DISTINCT P.seats FROM FlightInfo FI, Flight F, Plane P WHERE FI.flight_id = '{}' AND F.actual_departure_date = '{}' AND P.id = FI.plane_id;".format(flight_number,a_d_d))
 
             while True:
                 row = cur.fetchone()
 
                 if row == None:
                     break
-
+                seats = row[0]
                 print("Seats {0}".format(row[0]))
 
 
 
 
-            cur.execute("SELECT num_sold FROM Flight WHERE fnum = %s"())
+            cur.execute("SELECT num_sold FROM Flight WHERE fnum = '{}';".format(flight_number))
 
             while True:
                 row = cur.fetchone()
                 if row == None:
                     break
+
+                num_sold = row[0]
                 print("Seats {0}".format(row[0]))
+
+
+
+            print(seats - num_sold)
+
 
 
 
