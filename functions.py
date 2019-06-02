@@ -6,27 +6,35 @@ import sys
 con = None
 
 
-def checkPilot(pilot_name,pilotstuff):
+def checkPilot(pilot_name,pilot_nationality):
     
     try:
-            con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
-            cur = con.cursor()
+        con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
+        cur = con.cursor()
 
 
 
-            cur.execute("SELECT COUNT(*) FROM Reservation R WHERE R.fid = %s AND R._status = %s;"())
+        cur.execute("SELECT * FROM Pilot P WHERE P.fullname = '{}';".format(pilot_name))
 
-            while True:
-                row = cur.fetchone()
+        while True:
+            row = cur.fetchone()
 
-                if row == None:
-                    break
+            if row == None:
 
-                print("{0}".format(row[0]))
+                cur.execute("INSERT INTO Pilot (id,fullname,nationality) VALUES(nextval('PilotID'), '{}', '{}');".format(pilot_name, pilot_nationality))
+                con.commit()
+                return None
 
 
 
-        except psycopg2.DatabaseError as e:
+                
+
+            else:
+
+                return row[0]
+
+
+    except psycopg2.DatabaseError as e:
             if con:
                 con.rollback()
             print("Error")
@@ -35,9 +43,9 @@ def checkPilot(pilot_name,pilotstuff):
 
 
 
-        finally:
-            if con:
-                con.close()
+    finally:
+        if con:
+            con.close()
 
 
 
@@ -54,41 +62,46 @@ def checkPilot(pilot_name,pilotstuff):
 
 
 
-def checkPlane():
-
-    if request.method == 'POST':
-
-
-        try:
-            con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
-            cur = con.cursor()
+def checkPlane(make,model,age,seats):
 
 
 
-            cur.execute("SELECT COUNT(*) FROM Reservation R WHERE R.fid = %s AND R._status = %s;"())
 
-            while True:
-                row = cur.fetchone()
-
-                if row == None:
-                    break
-
-                print("{0}".format(row[0]))
+    try:
+        con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
+        cur = con.cursor()
 
 
 
-        except psycopg2.DatabaseError as e:
-            if con:
-                con.rollback()
+        cur.execute("SELECT * FROM Plane P WHERE P.make = '{}' AND P.model = '{}' AND P.age = '{}' AND P.seats = '{}' ;".format(make,model,age,seats))
+
+        while True:
+            row = cur.fetchone()
+
+            if row == None:
+
+                cur.execute("INSERT INTO Plane(id,make,model,age,seats) VALUES (nextval('PlaneID'), '{}', '{}', '{}', '{}');".format(make,model,age,seats))
+                con.commit()
+
+                return None
+
+
+
+            else:
+                return row[0]
+
+
+    except psycopg2.DatabaseError as e:
+        if con:
+            con.rollback()
             print("Error")
             print(e)
             sys.exit(1)
 
 
-
-        finally:
-            if con:
-                con.close()
+    finally:
+        if con:
+            con.close()
 
     
     
