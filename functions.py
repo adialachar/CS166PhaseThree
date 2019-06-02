@@ -104,6 +104,50 @@ def checkPlane(make,model,age,seats):
             con.close()
 
     
+
+    
+    
+   def checkCustomer(fname,lname,......):
+
+
+
+
+    try:
+        con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
+        cur = con.cursor()
+
+
+
+        cur.execute("SELECT * FROM Customer C WHERE C.fname = '{}' AND C.lname = '{}' AND C.DOB = '{}' ;".format(fname,lname,DOB))
+
+        while True:
+            row = cur.fetchone()
+
+            if row == None:
+
+                cur.execute("INSERT INTO Customer (id,fname,lname,model,age,seats) VALUES (nextval('CustomerID'), '{}', '{}', '{}', '{}');".format(make,model,age,seats))
+                con.commit()
+
+                return None
+
+
+
+            else:
+                return row[0]
+
+
+    except psycopg2.DatabaseError as e:
+        if con:
+            con.rollback()
+            print("Error")
+            print(e)
+            sys.exit(1)
+
+
+    finally:
+        if con:
+            con.close()
+   
     
     
     
@@ -129,4 +173,7 @@ def checkPlane(make,model,age,seats):
     
     
     
-    return 0
+    
+    
+    
+    
