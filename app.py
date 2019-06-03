@@ -109,7 +109,7 @@ def Plane():
                 con.close()
     
 
-    return render_template("plane.html")
+    return render_template("plane.html",)
 
 
 
@@ -500,16 +500,17 @@ def BookFlight():
 
             row = cur.fetchone()
             num_seats = row[0]
-            
+            res_status = ""
             if num_sold < num_seats:
                 cur.execute("Insert into reservation (rnum,cid,fid,status) values (nextval('ResNum'),'{}','{}','R');".format(customer_id,flight_number))
                 cur.execute("Update flight set num_sold = num_sold + 1 where fnum = '{}'".format(flight_number)) 
                 print("HELLO BOYS AND GIRLS")
+                res_status = 'Reserved'
             else:
                 cur.execute("Insert into reservation (rnum,cid,fid,status) values (nextval('ResNum'),'{}','{}', 'W');".format(customer_id,flight_number))
-              
+                res_status = 'Waitlisted'
             con.commit()
-
+            return render_template('bookflights.html', res_status = res_status) 
 
         except psycopg2.DatabaseError as e:
             if con:
@@ -587,7 +588,8 @@ def AvailableSeats():
 
 
             print(seats - num_sold)
-
+            S = seats - num_sold
+            return render_template('available_seats.html',S=S)
 
 
 
@@ -634,7 +636,7 @@ def repairs_per_plane():
 
 
     if request.method == 'POST':
-
+        data = ""
         try:
             con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
             cur = con.cursor()
@@ -650,6 +652,15 @@ def repairs_per_plane():
                     break
 
                 print("PlaneID {0} , number of repairs {1}".format(row[0], row[1]))
+                data += str(row[0])
+                data += ","
+                data += str(row[1])
+                data += "\n"
+
+
+            return render_template('display_data.html',data = data)
+
+
 
 
 
@@ -682,7 +693,7 @@ def repairs_per_year():
 
     if request.method == 'POST':
 
-
+        data = ""
 
 
         try:
@@ -700,6 +711,14 @@ def repairs_per_year():
                     break
 
                 print("YEAR {0} , number of repairs {1}".format(row[0], row[1]))
+                data += str(row[0])
+                data += ","
+                data += str(row[1])
+                data += "\n"
+
+                return render_template('display_data.html', data=data)
+
+
 
 
 
@@ -735,7 +754,7 @@ def passenger_status():
         flight_number = data.get('flight_number',-1)
         passenger_status = data.get('passenger_status',-1)
 
-
+        a = None
 
 
         try:
@@ -753,8 +772,8 @@ def passenger_status():
                     break
 
                 print("{0}".format(row[0]))
-
-
+                a = row[0]
+            return render_template('available_seats.html',a=a)
 
         except psycopg2.DatabaseError as e:
             if con:
