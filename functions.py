@@ -107,8 +107,7 @@ def checkPlane(make,model,age,seats):
 
     
     
-   def checkCustomer(fname,lname,......):
-
+def checkCustomer(fname,lname,gender,dob,address,phone,zipcode):
 
 
 
@@ -118,17 +117,19 @@ def checkPlane(make,model,age,seats):
 
 
 
-        cur.execute("SELECT * FROM Customer C WHERE C.fname = '{}' AND C.lname = '{}' AND C.DOB = '{}' ;".format(fname,lname,DOB))
+        cur.execute("SELECT * FROM Customer C WHERE C.fname = '{}' AND C.lname = '{}' AND C.dob = '{}' ;".format(fname,lname,dob))
 
         while True:
             row = cur.fetchone()
 
             if row == None:
 
-                cur.execute("INSERT INTO Customer (id,fname,lname,model,age,seats) VALUES (nextval('CustomerID'), '{}', '{}', '{}', '{}');".format(make,model,age,seats))
+                cur.execute("INSERT INTO Customer (id,fname,lname,model,age,seats) VALUES (nextval('CustomerID'), '{}', '{}', '{}', '{}','{}','{}','{}');".format(fname,lname,gender,dob,address,phone,zipcode))
                 con.commit()
 
                 return None
+
+
 
 
 
@@ -139,10 +140,9 @@ def checkPlane(make,model,age,seats):
     except psycopg2.DatabaseError as e:
         if con:
             con.rollback()
-            print("Error")
-            print(e)
-            sys.exit(1)
-
+        print("Error")
+        print(e)
+        sys.exit(1)
 
     finally:
         if con:

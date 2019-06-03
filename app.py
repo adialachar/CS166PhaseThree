@@ -446,7 +446,7 @@ def BookFlight():
 
 
         customer_id = functions.checkCustomer(customer_fname,customer_lname,customer_gender,customer_DOB,customer_address,customer_phone,customer_zipcode)
-
+        
 
         '''
         if customer_id == None:
@@ -476,7 +476,7 @@ def BookFlight():
 
 
 
-
+            print(customer_id)
 
             cur.execute("select num_sold from flight where flight.fnum = '{}'".format(flight_number))
             num_sold = None
@@ -503,10 +503,12 @@ def BookFlight():
             
             if num_sold < num_seats:
                 cur.execute("Insert into reservation (rnum,cid,fid,status) values (nextval('ResNum'),'{}','{}','R');".format(customer_id,flight_number))
+                cur.execute("Update flight set num_sold = num_sold + 1 where fnum = '{}'".format(flight_number)) 
+                print("HELLO BOYS AND GIRLS")
             else:
                 cur.execute("Insert into reservation (rnum,cid,fid,status) values (nextval('ResNum'),'{}','{}', 'W');".format(customer_id,flight_number))
-            
-
+              
+            con.commit()
 
 
         except psycopg2.DatabaseError as e:
@@ -727,13 +729,22 @@ def passenger_status():
     if request.method == 'POST':
 	
 	
+
+        data = request.form
+
+        flight_number = data.get('flight_number',-1)
+        passenger_status = data.get('passenger_status',-1)
+
+
+
+
         try:
             con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
             cur = con.cursor()
         
 
 
-            cur.execute("SELECT COUNT(*) FROM Reservation R WHERE R.fid = %s AND R._status = %s;"())
+            cur.execute("SELECT COUNT(*) FROM Reservation R WHERE R.fid = '{}' AND R.status = '{}';".format(flight_number,passenger_status))
 
             while True:
                 row = cur.fetchone()
