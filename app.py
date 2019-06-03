@@ -691,7 +691,7 @@ def repairs_per_year():
         
 
 
-            cur.execute("SELECT date_part('year', R1.repair_date) AS R_year, COUNT(R2.id) AS myCount FROM Repairs R1, Repairs R2 WHERE R1.id = R2.id GROUP BY R_year ORDER BY myCount ASC;")
+            cur.execute("SELECT date_part('year', R1.repair_date) AS R_year, COUNT(R2.rid) AS myCount FROM Repairs R1, Repairs R2 WHERE R1.rid = R2.rid GROUP BY R_year ORDER BY myCount ASC;")
 
             while True:
                 row = cur.fetchone()
