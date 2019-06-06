@@ -66,7 +66,11 @@
   </div>
 </nav>
 
-	  
+	  {% if error_message is not none %}
+<div class="alert alert-danger" role="alert">
+	{{error_message}}
+</div>
+{%endif%}
 	  
 	   <div class = "content" align = center style="padding-top: 200px;">
 	  
