@@ -1,1 +1,10 @@
-<html> {% if data is not none %} {{data}} {% endif %} </html> 
+<html> {% if data is not none %}
+	
+		{%for i in data %}
+
+		{{i[0]}}, {{i[1]}} <br><br>
+
+		{%endfor%}
+	
+	
+	{% endif %} </html> 

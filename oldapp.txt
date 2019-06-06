@@ -1,0 +1,239 @@
+from flask import Flask, render_template, request
+import psycopg2
+import sys
+import csv
+'''
+import customer    
+import flights  
+import planes   
+import reservation  
+import technician
+import flightinfo  
+import pilots   
+import repairs  
+import schedule
+'''
+#from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+con = None
+
+
+
+@app.route("/")
+def main():
+
+
+        fd = open('create.sql','r')
+        sqlFile = fd.read()
+        fd.close()
+        
+
+        #print(sqlFile)
+        #print(sqlFile)
+        
+
+        try: 
+            con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
+            print("HIIIII")
+            cur = con.cursor()
+            print("HELO")
+            #cur.execute("DROP SCHEMA public CASCADE;")
+            #cur.execute("CREATE SCHEMA public;")
+
+            #cur.execute("GRANT ALL ON SCHEMA public TO postgres;")
+            #cur.execute("GRANT ALL ON SCHEMA public TO public;")
+
+
+            cur.execute("DROP TABLE IF EXISTS customer CASCADE;")
+
+
+            cur.execute("DROP TABLE IF EXISTS Flight CASCADE;--OK")
+            cur.execute("DROP TABLE IF EXISTS Pilot CASCADE;--OK")
+            cur.execute("DROP TABLE IF EXISTS Plane CASCADE;--OK")
+            cur.execute("DROP TABLE IF EXISTS Technician CASCADE;--OK")
+
+            cur.execute("DROP TABLE IF EXISTS Reservation CASCADE;--OK")
+            cur.execute("DROP TABLE IF EXISTS FlightInfo CASCADE;--OK")
+            cur.execute("DROP TABLE IF EXISTS Repairs CASCADE;--OK")
+            cur.execute("DROP TABLE IF EXISTS Schedule CASCADE;--OK")
+
+
+
+
+
+            cur.execute("DROP DOMAIN IF EXISTS us_postal_code CASCADE;")
+            cur.execute("DROP DOMAIN IF EXISTS _STATUS CASCADE;")
+            cur.execute("DROP DOMAIN IF EXISTS _GENDER CASCADE;")
+            cur.execute("DROP DOMAIN IF EXISTS _CODE CASCADE;")
+            cur.execute("DROP DOMAIN IF EXISTS _PINTEGER CASCADE;")
+            cur.execute("DROP DOMAIN IF EXISTS _PZEROINTEGER CASCADE;")
+            cur.execute("DROP DOMAIN IF EXISTS _YEAR_1970 CASCADE;")
+            cur.execute("DROP DOMAIN IF EXISTS _SEATS CASCADE;")
+
+            
+            #cur.execute("CREATE DOMAIN us_postal_code AS TEXT CHECK(VALUE ~ '^\d{5}$' OR VALUE ~ '^\d{5}-\d{4}$'); ")
+            print("a")
+            #cur.execute("CREATE DOMAIN _STATUS CHAR(1) CHECK (value IN ( 'W' , 'C', 'R' ) ); ")
+            print("d")
+            #cur.execute("CREATE DOMAIN _GENDER CHAR(1) CHECK (value IN ( 'F' , 'M' ) );")
+            print("I")
+            #cur.execute("CREATE DOMAIN _CODE CHAR(2) CHECK (value IN ( 'MJ' , 'MN', 'SV' ) ); --Major, Minimum, Service")
+            print("t")
+            #cur.execute("CREATE DOMAIN _PINTEGER AS int4 CHECK(VALUE > 0);")
+            print("y")
+            #cur.execute("CREATE DOMAIN _PZEROINTEGER AS int4 CHECK(VALUE >= 0);")
+            print("a")
+            #cur.execute("CREATE DOMAIN _YEAR_1970 AS int4 CHECK(VALUE >= 0);")
+            print("ACH")
+            #cur.execute("CREATE DOMAIN _SEATS AS int4 CHECK(VALUE > 0 AND VALUE < 500);--Plane Seats")
+            
+            print("H1N1")
+
+
+
+
+
+
+
+            cur.execute(sqlFile)
+
+            print("Tables created") 
+
+
+            #Now to populate the tables lol
+
+            '''
+            with open('customers.csv','r') as f:
+                reader = csv.reader(f)
+                next(reader) #skips the header row
+                for row in reader:
+                    cur.execute("INSERT INTO Customer VALUES(%s, %s, %s, .....")
+            '''
+
+            with open('customer.csv','r') as f:
+                #next(f)
+                cur.copy_from(f, 'customer', sep=',')
+
+                f.close()                
+
+
+            with open('pilots.csv','r') as g:
+                #next(g)
+                cur.copy_from(g, 'pilot', sep=',')
+                g.close()
+
+            print("a")
+
+            '''
+            with open('flightinfo.csv','r') as h:
+                next(h)
+                cur.copy_from(f, 'flightinfo', sep=',')
+                h.close()
+
+            print("c")
+
+            '''
+
+
+            with open('planes.csv','r') as f:
+                #next(f)
+                cur.copy_from(f, 'plane', sep=',')
+                f.close()
+
+            print("h")
+
+
+
+            with open('technician.csv','r') as f:
+                #next(f)
+                cur.copy_from(f, 'technician', sep=',')
+                f.close()
+
+            print("a")
+
+
+            with open('flights.csv','r') as f:
+                #next(f)
+                cur.copy_from(f, 'flight', sep=',')
+                f.close()
+
+            print("r")
+
+
+
+            with open('reservation.csv','r') as f:
+                #next(f)
+                cur.copy_from(f, 'reservation', sep=',')
+                f.close()
+
+            print("y")
+
+            with open('schedule.csv','r') as f:
+                #next(f)
+                cur.copy_from(f, 'schedule', sep=',')
+
+                f.close()
+
+            print("a")
+            with open('flightinfo.csv','r') as f:
+                #next(f)
+                cur.copy_from(f, 'flightinfo', sep=',')
+
+                f.close()
+
+
+            with open('repairs.csv','r') as f:
+                #next(f)
+                cur.copy_from(f,'repairs',sep=',')
+                f.close()
+            
+            with open('schedule.csv','r') as f:
+                #next(f)
+                cur.copy_from(f,'schedule',sep=',')
+                f.close()
+            
+            '''
+            with open('schedule.csv','r') as f:
+                reader = csv.reader(f)
+                #next(reader) #skips the header row
+                for row in reader:
+                    cur.execute("INSERT INTO SCHEDULE(id,flightnum,departure_time,arrival_time) VALUES (%s, %s, %s, %s);",row)
+
+            '''
+
+
+            #cur.execute("SELECT * FROM customer;")
+            print("HI")
+
+
+        
+
+
+
+
+
+
+
+            con.commit()
+
+        except psycopg2.DatabaseError as e:
+            if con:
+                con.rollback()
+            print("Error")
+            print(e)
+            sys.exit(1)
+
+
+
+        finally:
+            if con:
+                con.close()
+        
+
+        return render_template("index.html")
+
+
+
+if __name__ == "__main__":
+	app.run()

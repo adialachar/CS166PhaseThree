@@ -3,6 +3,7 @@ import psycopg2
 import sys
 import csv
 import functions
+import re
 #import checkPlane from functions
 #import checkPilot from functions
 '''
@@ -20,8 +21,8 @@ import schedule
 
 app = Flask(__name__)
 con = None
-
-
+date_format = "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]"
+D_F = re.compile(date_format)
 
 @app.route("/", methods = ['GET', 'POST'])
 def main():
@@ -294,8 +295,15 @@ def Flight():
         if (pilot_name == '' or pilot_nationality == '' or pilot_name == '' or plane_age == '' or plane_seats == '' or cost == '' or seats_sold == '' or num_stops == '' or a_d_d == '' or a_a_d == '' or AA == '' or DA == ''):
             error_message = "Looks like you left at least one of the fields blank"
             return render_template('flight.html', error_message = error_message)
+        
+        L = D_F.match(a_d_d)
+        I = D_F.match(a_a_d)
+        #N = D_F.match(AA)
+        #K = D_F.match(DA)
 
-
+        if (not ( L and I )):
+            error_message = "Looks like you entered the date in the wrong format. It's YYYY-MM-DD"
+            return render_template('flight.html',error_message = error_message)
 
 
 
@@ -464,9 +472,12 @@ def BookFlight():
 
         if (flight_number == '' or customer_fname == '' or customer_lname == '' or customer_gender == '' or customer_DOB == '' or customer_address == '' or customer_phone == '' or customer_zipcode == ''):
             error_message = "Looks like you left at least one of the fields blank"
-            return render_template('bookflight.html', error_message = error_message)
+            return render_template('bookflights.html', error_message = error_message)
 
-
+        L = D_F.match(customer_DOB)
+        if (not L):
+            error_message = "Looks like you inputted the date wrong. it's YYYY-MM-DD"
+            return render_template('bookflights.html', error_message = error_message)
 
 
 
@@ -578,9 +589,12 @@ def AvailableSeats():
         flight_number = data.get("flight_number",-1)
         a_d_d = data.get("a_d_d",-1)
 
-        if (flight_number == '' or a_d_d == ''):
-            return render_template('available_seats.html', error_message)
+        if (flight_number == ''):
+            error_message = "Looks like you left at least one of the fields blank"
+            return render_template('available_seats.html', error_message=error_message)
 
+
+       
 
 
         try:
@@ -589,7 +603,7 @@ def AvailableSeats():
         
 
 
-            cur.execute("SELECT DISTINCT P.seats FROM FlightInfo FI, Flight F, Plane P WHERE FI.flight_id = '{}' AND F.actual_departure_date = '{}' AND P.id = FI.plane_id;".format(flight_number,a_d_d))
+            cur.execute("SELECT DISTINCT P.seats FROM FlightInfo FI, Flight F, Plane P WHERE FI.flight_id = '{}'  AND P.id = FI.plane_id;".format(flight_number))
 
             while True:
                 row = cur.fetchone()
@@ -663,7 +677,7 @@ def repairs_per_plane():
 
 
     if request.method == 'POST':
-        data = ""
+        data = []
         try:
             con = psycopg2.connect("host = 'localhost' dbname = 'testdb' user = 'adialachar' password = 'squirtle123'")
             cur = con.cursor()
@@ -679,11 +693,7 @@ def repairs_per_plane():
                     break
 
                 print("PlaneID {0} , number of repairs {1}".format(row[0], row[1]))
-                data += str(row[0])
-                data += ","
-                data += str(row[1])
-                data += "\n"
-
+                data.append((row[0],row[1]))
 
             return render_template('display_data.html',data = data)
 
@@ -720,7 +730,7 @@ def repairs_per_year():
 
     if request.method == 'POST':
 
-        data = ""
+        data = []
 
 
         try:
@@ -738,10 +748,7 @@ def repairs_per_year():
                     break
 
                 print("YEAR {0} , number of repairs {1}".format(row[0], row[1]))
-                data += str(row[0])
-                data += ","
-                data += str(row[1])
-                data += "\n"
+                data.append((row[0], row[1]))
 
             return render_template('display_data.html', data=data)
 
@@ -782,6 +789,7 @@ def passenger_status():
         passenger_status = data.get('passenger_status',-1)
 
         if (flight_number == '' or passenger_status == ''):
+            error_message = "Looks like you left at least one of the fields blank"
             return render_template('passenger_status.html', error_message = error_message)
 
 
