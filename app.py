@@ -56,7 +56,9 @@ def Plane():
 
         Seats = int(Seats)
 
-
+        if (Make == -1 or Model == -1 or Age == -1 or Seats == -1):
+            error_message = "Looks like you left one of the fields blank"
+            return render_template('plane.html', error_message = error_message)
 
 
         try: 
@@ -123,6 +125,9 @@ def Pilot():
         full_name = data.get('Full Name',-1)
         nationality = data.get('Nationality',-1)
 
+        if (full_name == -1 or nationality == -1):
+            error_message = "Looks like you left one of the fields blank"
+            return render_template('pilot.html', error_message = error_message)
 
 
         print(full_name)
@@ -192,6 +197,13 @@ def Tech():
         full_name = data.get('fullname',-1)
 
         print(full_name)
+
+
+        if (full_name == -1):
+            error_message = "Looks like you left one of the fields blank"
+            return render_template('technician.html', error_message = error_message)
+
+
 
 	
 	
@@ -279,6 +291,12 @@ def Flight():
         plane_seats = data.get("plane_seats",-1)
 
         
+        if (pilot_name == -1 or pilot_nationality == -1 or pilot_name == -1 or plane_age == -1 or plane_seats == -1 or cost == -1 or seats_sold == -1 or num_stops == -1 or a_d_d == -1 or a_a_d == -1 or AA == -1 or DA == -1):
+            error_message = "Looks like you left at least one of the fields blank"
+            return render_template('flight.html', error_message = error_message)
+
+
+
 
 
         print(cost)
@@ -444,6 +462,13 @@ def BookFlight():
         customer_zipcode = data.get("customer_zipcode",-1)
 
 
+        if (flight_number == -1 or customer_fname == -1 or customer_lname == -1 or customer_gender == -1 or customer_DOB == -1 or customer_address == -1 or customer_phone == -1 or customer_zipcode == -1):
+            error_message = "Looks like you left at least one of the fields blank"
+            return render_template('bookflight.html', error_message = error_message)
+
+
+
+
 
         customer_id = functions.checkCustomer(customer_fname,customer_lname,customer_gender,customer_DOB,customer_address,customer_phone,customer_zipcode)
         
@@ -553,6 +578,8 @@ def AvailableSeats():
         flight_number = data.get("flight_number",-1)
         a_d_d = data.get("a_d_d",-1)
 
+        if (flight_number == -1 or a_d_d == -1):
+            return render_template('available_seats.html', error_message)
 
 
 
@@ -716,7 +743,7 @@ def repairs_per_year():
                 data += str(row[1])
                 data += "\n"
 
-                return render_template('display_data.html', data=data)
+            return render_template('display_data.html', data=data)
 
 
 
@@ -754,6 +781,10 @@ def passenger_status():
         flight_number = data.get('flight_number',-1)
         passenger_status = data.get('passenger_status',-1)
 
+        if (flight_number == -1 or passenger_status == -1):
+            return render_template('passenger_status.html', error_message = error_message)
+
+
         a = None
 
 
@@ -773,7 +804,7 @@ def passenger_status():
 
                 print("{0}".format(row[0]))
                 a = row[0]
-            return render_template('available_seats.html',a=a)
+            return render_template('passenger_status.html',a=a)
 
         except psycopg2.DatabaseError as e:
             if con:
