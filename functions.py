@@ -124,7 +124,7 @@ def checkCustomer(fname,lname,gender,dob,address,phone,zipcode):
 
             if row == None:
 
-                cur.execute("INSERT INTO Customer (id,fname,lname,model,age,seats) VALUES (nextval('CustomerID'), '{}', '{}', '{}', '{}','{}','{}','{}');".format(fname,lname,gender,dob,address,phone,zipcode))
+                cur.execute("INSERT INTO Customer (id,fname,lname,gtype,dob,address,phone,zipcode) VALUES (nextval('CustomerID'), '{}', '{}', '{}', '{}','{}','{}','{}');".format(fname,lname,gender,dob,address,phone,zipcode))
                 con.commit()
 
                 return None

@@ -360,7 +360,7 @@ def Flight():
 
 
 
-                cur.execute("select * from plane P where P.make = '{}' and P.model = '{}' and P.age = '{}' and P.seats = '{}'".format(plane_make,plane_model,plane_age,))
+                cur.execute("select * from plane P where P.make = '{}' and P.model = '{}' and P.age = '{}' and P.seats = '{}'".format(plane_make,plane_model,plane_age,plane_seats))
 
                 row = cur.fetchone()
 
