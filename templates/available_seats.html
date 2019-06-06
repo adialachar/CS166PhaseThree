@@ -87,7 +87,11 @@
 	  
 	  
 	  
-	  
+	  {% if error_message is not none %}
+<div class="alert alert-danger" role="alert">
+	{{error_message}}
+</div>
+{%endif%}
 	  
 	  
 	  
