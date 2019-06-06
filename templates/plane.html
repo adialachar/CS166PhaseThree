@@ -55,7 +55,11 @@
 		<a class="nav-link" href="http://127.0.0.1:5000/passenger_status">Passenger Status by Flight</a>
 	</li>
 
-
+{% if error_message is not none %}
+<div class="alert alert-danger" role="alert">
+	{{error_message}}
+</div>
+{%endif%}
 
 
 
